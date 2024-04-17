@@ -51,5 +51,57 @@ namespace SplitTheBillTests
             // Act and Assert
             Assert.ThrowsException<ArgumentException>(() => splitter.SplitAmount(totalAmount, numberOfPeople));
         }
+        [TestMethod]
+        public void CalculateTip_EqualMealCosts_ReturnsEqualTipAmounts()
+        {
+            // Arrange
+            var mealCosts = new Dictionary<string, decimal>
+            {
+                { "Person 1", 25.00m },
+                { "Person 2", 25.00m },
+                { "Person 3", 25.00m }
+            };
+            float tipPercentage = 10;
+
+            // Act
+            var tipByPerson = splitter.CalculateTip(mealCosts, tipPercentage);
+
+            // Assert
+            Assert.AreEqual(2.50m, tipByPerson["Person 1"]);
+            Assert.AreEqual(2.50m, tipByPerson["Person 2"]);
+            Assert.AreEqual(2.50m, tipByPerson["Person 3"]);
+        }
+
+        [TestMethod]
+        public void CalculateTip_ZeroTotalCost_ThrowsArgumentException()
+        {
+            // Arrange
+            var mealCosts = new Dictionary<string, decimal>
+            {
+                { "Person 1", 0.00m },
+                { "Person 2", 0.00m },
+                { "Person 3", 0.00m }
+            };
+            float tipPercentage = 15;
+
+            // Act and Assert
+            Assert.ThrowsException<ArgumentException>(() => splitter.CalculateTip(mealCosts, tipPercentage));
+        }
+
+        [TestMethod]
+        public void CalculateTip_InvalidTipPercentage_ThrowsArgumentException()
+        {
+            // Arrange
+            var mealCosts = new Dictionary<string, decimal>
+            {
+                { "Person 1", 30.00m },
+                { "Person 2", 40.00m },
+                { "Person 3", 50.00m }
+            };
+            float tipPercentage = -5;
+
+            // Act and Assert
+            Assert.ThrowsException<ArgumentException>(() => splitter.CalculateTip(mealCosts, tipPercentage));
+        }
     }
 }
