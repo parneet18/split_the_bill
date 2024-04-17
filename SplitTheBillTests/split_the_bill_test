@@ -1,0 +1,55 @@
+
+
+using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SplitTheBillLibrary;
+
+namespace SplitTheBillTests
+{
+    [TestClass]
+    public class split_the_bill_test
+    {
+        private  Splitter splitter;
+        [TestInitialize]
+        public void Setup()
+        {
+            splitter = new Splitter();
+        }
+
+        [TestMethod]
+        public void SplitAmount_EqualSplit_ReturnsCorrectAmount()
+        {
+            // Arrange
+            decimal totalAmount = 100;
+            int numberOfPeople = 5;
+
+            // Act
+            decimal splitAmount = splitter.SplitAmount(totalAmount, numberOfPeople);
+
+            // Assert
+            Assert.AreEqual(20, splitAmount);
+        }
+
+        [TestMethod]
+        public void SplitAmount_ZeroAmount_ThrowsArgumentException()
+        {
+            // Arrange
+            decimal totalAmount = 0;
+            int numberOfPeople = 5;
+
+            // Act and Assert
+            Assert.ThrowsException<ArgumentException>(() => splitter.SplitAmount(totalAmount, numberOfPeople));
+        }
+
+        [TestMethod]
+        public void SplitAmount_NegativeNumberOfPeople_ThrowsArgumentException()
+        {
+            // Arrange
+            decimal totalAmount = 100;
+            int numberOfPeople = -5;
+
+            // Act and Assert
+            Assert.ThrowsException<ArgumentException>(() => splitter.SplitAmount(totalAmount, numberOfPeople));
+        }
+    }
+}
