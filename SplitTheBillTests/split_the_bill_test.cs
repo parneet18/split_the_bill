@@ -1,6 +1,5 @@
-
-
 using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SplitTheBillLibrary;
 
@@ -9,11 +8,12 @@ namespace SplitTheBillTests
     [TestClass]
     public class split_the_bill_test
     {
-        private  Splitter splitter;
+        private split_the_bill splitter;
+
         [TestInitialize]
         public void Setup()
         {
-            splitter = new Splitter();
+            splitter = new split_the_bill();
         }
 
         [TestMethod]
@@ -51,6 +51,7 @@ namespace SplitTheBillTests
             // Act and Assert
             Assert.ThrowsException<ArgumentException>(() => splitter.SplitAmount(totalAmount, numberOfPeople));
         }
+
         [TestMethod]
         public void CalculateTip_EqualMealCosts_ReturnsEqualTipAmounts()
         {
@@ -62,14 +63,15 @@ namespace SplitTheBillTests
                 { "Person 3", 25.00m }
             };
             float tipPercentage = 10;
+            decimal tolerance = 0.01m; // float
 
             // Act
             var tipByPerson = splitter.CalculateTip(mealCosts, tipPercentage);
 
             // Assert
-            Assert.AreEqual(2.50m, tipByPerson["Person 1"]);
-            Assert.AreEqual(2.50m, tipByPerson["Person 2"]);
-            Assert.AreEqual(2.50m, tipByPerson["Person 3"]);
+            Assert.AreEqual(2.50m, tipByPerson["Person 1"], tolerance); 
+            Assert.AreEqual(2.50m, tipByPerson["Person 2"], tolerance);
+            Assert.AreEqual(2.50m, tipByPerson["Person 3"], tolerance);
         }
 
         [TestMethod]
@@ -102,6 +104,45 @@ namespace SplitTheBillTests
 
             // Act and Assert
             Assert.ThrowsException<ArgumentException>(() => splitter.CalculateTip(mealCosts, tipPercentage));
+        }
+
+        [TestMethod]
+        public void CalculateTipPerPerson_ValidInput_CalculatesCorrectly()
+        {
+            // Arrange
+            decimal totalPrice = 100;
+            int numberOfPatrons = 5;
+            float tipPercentage = 15;
+
+            // Act
+            decimal tipPerPerson = splitter.CalculateTipPerPerson(totalPrice, numberOfPatrons, tipPercentage);
+
+            // Assert
+            Assert.AreEqual(3.00m, tipPerPerson);
+        }
+
+        [TestMethod]
+        public void CalculateTipPerPerson_ZeroTotalPrice_ThrowsArgumentException()
+        {
+            // Arrange
+            decimal totalPrice = 0;
+            int numberOfPatrons = 5;
+            float tipPercentage = 15;
+
+            // Act and Assert
+            Assert.ThrowsException<ArgumentException>(() => splitter.CalculateTipPerPerson(totalPrice, numberOfPatrons, tipPercentage));
+        }
+
+        [TestMethod]
+        public void CalculateTipPerPerson_NegativeNumberOfPatrons_ThrowsArgumentException()
+        {
+            // Arrange
+            decimal totalPrice = 100;
+            int numberOfPatrons = -5;
+            float tipPercentage = 15;
+
+            // Act and Assert
+            Assert.ThrowsException<ArgumentException>(() => splitter.CalculateTipPerPerson(totalPrice, numberOfPatrons, tipPercentage));
         }
     }
 }
